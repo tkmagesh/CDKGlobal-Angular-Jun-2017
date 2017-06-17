@@ -79,13 +79,31 @@
 
 
 			//React to user actions
-			bindTwoWay($('#txtBasic'), 'calculator.basic');
+			/*bindTwoWay($('#txtBasic'), 'calculator.basic');
 			bindTwoWay($('#txtHra'), 'calculator.hra');
 			bindTwoWay($('#txtDa'), 'calculator.da');
-			bindTwoWay($('#rangeTax'), 'calculator.tax');
-			bindClick($('#btnCalculate'), 'calculator.calculate()')
-			bindOneWay($('#divResult'), 'calculator.salary');
-			bindOneWay($('#spanTax'), 'calculator.tax');
+			bindTwoWay($('#rangeTax'), 'calculator.tax');*/
+			$('*[app-model]').each(function(index, element){
+				var $element = $(element),
+					model = $element.attr('app-model');
+				bindTwoWay($element, model);
+			})
+
+
+			//bindClick($('#btnCalculate'), 'calculator.calculate()')
+			$('*[app-click]').each(function(index, element){
+				var $element = $(element),
+					expr = $element.attr('app-click');
+				bindClick($element, expr);
+			})
+
+			/*bindOneWay($('#divResult'), 'calculator.salary');
+			bindOneWay($('#spanTax'), 'calculator.tax');*/
+			$('*[app-bind]').each(function(index, element){
+				var $element = $(element),
+					model = $element.attr('app-bind');
+				bindOneWay($element, model);
+			})
 		});
 	</script>
 </head>
@@ -95,26 +113,26 @@
 	<div class="content">
 		<div class="field">
 			<label for="">Basic :</label>
-			<input type="number" id="txtBasic" >
+			<input type="number" id="txtBasic" app-model="calculator.basic">
 		</div>
 		<div class="field">
 			<label for="">HRA :</label>
-			<input type="number" id="txtHra">
+			<input type="number" id="txtHra" app-model="calculator.hra">
 		</div>
 		<div class="field">
 			<label for="">DA :</label>
-			<input type="number" id="txtDa">
+			<input type="number" id="txtDa" app-model="calculator.da">
 		</div>
 		<div class="field">
 			<label for="">Tax :</label>
-			<input type="range" id="rangeTax" min="0" max="30" value="0">
-			<span id="spanTax">[Tax]</span>
+			<input type="range" id="rangeTax" min="0" max="30" app-model="calculator.tax">
+			<span id="spanTax" app-bind="calculator.tax">[Tax]</span>
 		</div>
 		<div class="field">
-			<input type="button" value="Calculate" id="btnCalculate">
+			<input type="button" value="Calculate" id="btnCalculate" app-click="calculator.calculate()">
 		</div>
 		<div class="field">
-			<div id="divResult">[Salary]</div>
+			<div id="divResult" app-bind="calculator.salary">[Salary]</div>
 		</div>
 	</div>
 </body>
