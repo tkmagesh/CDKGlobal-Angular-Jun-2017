@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<style>
+		.field{
+			margin-bottom: 10px;
+		}
+		label{
+			display: block;
+		}
+		#divResult{
+			color : red;
+			font-size: 22pt;
+		}
+		body{
+			margin-left: 50px;
+		}
+	</style>
+	<script src="jquery-3.2.1.js"></script>
+	<script src="angular.js"></script>
+	<script>
+		String.prototype.toInt = function() {
+			return parseInt(this, 10);
+		};
+
+		//Model
+		function SalaryCalculator(){
+			//State
+			this.basic = 0;
+			this.hra = 0;
+			this.da = 0;
+			this.tax = 0;
+			this.salary = 0;
+		}
+		//behavior
+		SalaryCalculator.prototype.calculate = function() {
+			var gross = this.basic + this.hra + this.da;
+			var net = gross * ((100-this.tax)/100);
+			this.salary = net;
+		};
+
+		angular.injector(['ng']).invoke(function($rootScope){
+			window.scope = $rootScope;
+		});
+
+		//View Utils
+		function bindTwoWay($element, model){
+			$element.change(function(){
+				var self = this;
+				scope.$apply(function(){
+					var expr = model + '=' + self.value.toInt();
+					scope.$eval(expr);
+				});
+			});
+			scope.$watch(model, function(newValue, oldValue){
+				$element.val(newValue);
+			});
+		}
+
+		function bindOneWay($element, model){
+			scope.$watch(model, function(newValue, oldValue){
+				$element.html(newValue);
+			});
+		}
+
+		function bindClick($element, expr){
+			$element.click(function(){
+				scope.$apply(function(){
+					scope.$eval(expr)
+				});
+			});
+		}
+		//UI
+		//View
+		$(function(){
+			window.calculator = scope.calculator = new SalaryCalculator();
+
+
+			//React to user actions
+			bindTwoWay($('#txtBasic'), 'calculator.basic');
+			
+
+			/*$('#txtHra').change(function(){
+				var self = this;
+				scope.$apply(function(){
+					calculator.hra =  self.value.toInt();
+				});
+			});
+			scope.$watch('calculator.hra', function(newValue, oldValue){
+				$('#txtHra').val(newValue);
+			});*/
+			bindTwoWay($('#txtHra'), 'calculator.hra');
+
+
+			/*$('#txtDa').change(function(){
+				var self = this;
+				scope.$apply(function(){
+					calculator.da =  self.value.toInt();
+				});
+			});
+			scope.$watch('calculator.da', function(newValue, oldValue){
+				$('#txtDa').val(newValue);
+			});*/
+
+			bindTwoWay($('#txtDa'), 'calculator.da');
+
+			/*$('#rangeTax').change(function(){
+				var self = this;
+				scope.$apply(function(){
+					calculator.tax =  self.value.toInt();
+				});
+			});
+			scope.$watch('calculator.tax', function(newValue, oldValue){
+				$('#rangeTax').val(newValue);
+			});*/
+
+			bindTwoWay($('#rangeTax'), 'calculator.tax');
+
+
+			/*$('#btnCalculate').click(function(){
+				scope.$apply(function(){
+					calculator.calculate();
+				});
+			});*/
+			bindClick($('#btnCalculate'), 'calculator.calculate()')
+			
+			//React to model changes
+			/*scope.$watch('calculator.salary', function(newValue, oldValue){
+				$('#divResult').html(newValue);
+			});*/
+			bindOneWay($('#divResult'), 'calculator.salary');
+			
+			
+			/*scope.$watch('calculator.tax', function(newValue, oldValue){
+				$('#spanTax').html(newValue);
+			});*/
+			bindOneWay($('#spanTax'), 'calculator.tax');
+		});
+	</script>
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	<hr>
+	<div class="content">
+		<div class="field">
+			<label for="">Basic :</label>
+			<input type="number" id="txtBasic">
+		</div>
+		<div class="field">
+			<label for="">HRA :</label>
+			<input type="number" id="txtHra">
+		</div>
+		<div class="field">
+			<label for="">DA :</label>
+			<input type="number" id="txtDa">
+		</div>
+		<div class="field">
+			<label for="">Tax :</label>
+			<input type="range" id="rangeTax" min="0" max="30" value="0">
+			<span id="spanTax">[Tax]</span>
+		</div>
+		<div class="field">
+			<input type="button" value="Calculate" id="btnCalculate">
+		</div>
+		<div class="field">
+			<div id="divResult">[Salary]</div>
+		</div>
+	</div>
+</body>
+</html>
