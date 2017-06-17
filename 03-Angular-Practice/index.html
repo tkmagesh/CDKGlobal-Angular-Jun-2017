@@ -34,6 +34,7 @@
 		myAppModule.controller('mathController', function($scope){
 			$scope.calculator = new MathCalculator();
 		})
+		
 	</script>
 </head>
 <body ng-app="myApp">
@@ -50,17 +51,17 @@
 		<div id="divResult">{{calculator.result}}</div>
 	</div>
 	<hr>
-	<div id="calculator-2">
-		<input type="number" >
-		<select >
+	<div id="calculator-2" ng-controller="mathController">
+		<input type="number" ng-model="calculator.number1">
+		<select ng-model="operation">
 			<option value="add">add</option>
 			<option value="subtract">subtract</option>
 			<option value="multiply">multiply</option>
 			<option value="divide">divide</option>
 		</select>
-		<input type="number" >
-		<input type="button" value="Calculate">
-		<div id="divResult"></div>
+		<input type="number" ng-model="calculator.number2">
+		<input type="button" value="Calculate" ng-click="calculator[operation]()">
+		<div id="divResult">{{calculator.result}}</div>
 	</div>
 </body>
 </html>
