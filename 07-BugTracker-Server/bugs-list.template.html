@@ -1,0 +1,29 @@
+<div class="content">
+		<a href="#!/new">Create New</a>
+		<bug-stats data="bugs"></bug-stats>
+		<section class="search">
+			<label for="">Search :</label>
+			<input type="text" ng-model="searchBug.name">
+			<label for="">Closed ? :</label>
+			<input type="checkbox" ng-model="searchBug.isClosed">
+			<input type="button" value="Show All" ng-click="searchBug.isClosed = undefined">
+		</section>
+		<section class="sort">
+			<label for="">Order By :</label>
+			<select ng-model="sortBugBy" ng-init="sortBugBy='name'">
+				<option value="name">Name</option>
+				<option value="isClosed">Status</option>
+			</select>
+			<label for="">Descending ? :</label>
+			<input type="checkbox" ng-model="sortBugDescending">
+		</section>
+		<section class="list">
+			<ol>
+				<li ng-repeat="bug in ( bugs | filter:searchBug | orderBy:sortBugBy:sortBugDescending) ">
+					<bug-item data="bug" on-click="toggle(bug)"></bug-item>
+				</li>
+				
+			</ol>
+			<input type="button" value="Remove Closed" ng-click="removeClosed()">
+		</section>
+	</div>

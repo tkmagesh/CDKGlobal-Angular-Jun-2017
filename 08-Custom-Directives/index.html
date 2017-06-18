@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Custom Directives</title>
+	<script src="angular.js"></script>
+	<script>
+		var myApp = angular.module('myApp', []);
+		myApp.run(function($rootScope){
+			$rootScope.message = 'Let there be peace!';
+
+			$rootScope.displayClearMessage = function(){
+				console.log('Message clear instruction received');
+			};
+		});
+
+
+		/*myApp.directive('helloWorld', function(){
+			return function($scope, $element, $attr){
+				$element.html($scope.message);
+				$element.on('click', function(){
+					$element.html('');
+				});
+
+				$scope.$watch('message', function(newValue){
+					$element.html(newValue);
+				})
+			};
+		})*/
+
+		myApp.directive('helloWorld', function(){
+			return {
+				restrict : 'E',
+				scope : {
+					/* @ , = , & */
+					msg : '=',
+					onClear : '&'
+				},
+				link : function($scope, $element, $attr){
+					$element.html($scope.msg);
+					$element.on('click', function(){
+						$scope.$apply(function(){
+							$scope.msg = ''
+							$scope.onClear();	
+						})
+					});
+
+					$scope.$watch('msg', function(newValue){
+						$element.html(newValue);
+					})
+				}
+			}
+		})
+	</script>
+</head>
+<body ng-app="myApp">
+	<h1>{{message}}</h1>
+	<hr>
+	<br>
+	<hello-world msg="message" on-clear="displayClearMessage()"></hello-world>
+	<!-- <div hello-world></div> -->
+</body>
+</html>
