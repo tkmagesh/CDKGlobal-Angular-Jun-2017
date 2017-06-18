@@ -60,7 +60,7 @@
 				- removeItem(key)
 				- key(index)
 				- clear()
-				
+
 				- length
 
 		10. Display 'createdAt'
@@ -87,11 +87,11 @@
 				}
 			}*/
 
-			var currentBugId = 0;
+			//var currentBugId = 0;
 
-			function createNew(bugName){
+			function createNew(id, bugName){
 				return {
-					id : ++currentBugId,
+					id : id,
 					name : bugName || defaultBugName,
 					isClosed : false
 				}
@@ -107,28 +107,61 @@
 			};
 		});
 
-		bugTrackerApp.controller('bugsController', function($scope, bugOperations){
+		bugTrackerApp.factory('bugStorage', function(bugOperations){
+			var storage = window.localStorage;
+			var currentBugId = 0;
+			function getAllBugs(){
+				var result = [];
+				for(var index =0; index < storage.length; index++){
+					var data = storage.getItem(storage.key(index));
+					var bug = angular.fromJson(data);
+					currentBugId = currentBugId > bug.id ? currentBugId : bug.id;
+					result.push(bug);
+				}
+				return result;
+			}
 
-			$scope.bugs = [
-				bugOperations.createNew('Server communication error'),
-				bugOperations.createNew('User actions not recognized'),
-				bugOperations.createNew('Data cleaning error'),
-				bugOperations.createNew('Application not responding')
-			];
+			function saveBug(bug){
+				storage.setItem(bug.id, angular.toJson(bug));
+			}
+			function addNewBug(bugName){
+				var newBug = bugOperations.createNew(++currentBugId, bugName);
+				saveBug(newBug);
+				return newBug;
+			}
+			function toggleBug(bug){
+				bugOperations.toggle(bug);
+				saveBug(bug);
+			}
+			function removeBug(bug){
+				storage.removeItem(bug.id);
+			}
+			return {
+				getAll : getAllBugs,
+				addNew : addNewBug,
+				toggle : toggleBug,
+				remove : removeBug
+			}
+		})
+		bugTrackerApp.controller('bugsController', function($scope, bugStorage){
+
+			$scope.bugs = bugStorage.getAll()
 
 			$scope.addNew = function(bugName){
-				var newBug = bugOperations.createNew(bugName);
+				var newBug = bugStorage.addNew(bugName);
 				$scope.bugs.push(newBug);
 			};
 
 			$scope.toggle = function(bug){
-				bugOperations.toggle(bug);
+				bugStorage.toggle(bug);
 			};
 
 			$scope.removeClosed = function(){
 				for(var index = $scope.bugs.length-1; index >= 0; index--)
-					if ($scope.bugs[index].isClosed)
+					if ($scope.bugs[index].isClosed){
+						bugStorage.remove($scope.bugs[index]);
 						$scope.bugs.splice(index,1);
+					}
 			};
 
 			
