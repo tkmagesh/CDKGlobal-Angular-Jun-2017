@@ -95,7 +95,12 @@
 		bugTrackerApp.controller('bugsController', function($scope, bugOperations){
 
 			
-			$scope.bugs = [];
+			$scope.bugs = [
+				bugOperations.createNew('Server communication error'),
+				bugOperations.createNew('User actions not recognized'),
+				bugOperations.createNew('Data cleaning error'),
+				bugOperations.createNew('Application not responding')
+			];
 
 			$scope.addNew = function(bugName){
 				var newBug = bugOperations.createNew(bugName);
@@ -133,7 +138,7 @@
 		</section>
 		<section class="search">
 			<label for="">Search :</label>
-			<input type="text" name="" id="">
+			<input type="text" ng-model="searchBug">
 			<label for="">Closed ? :</label>
 			<input type="checkbox" name="" id="">
 		</section>
@@ -150,8 +155,10 @@
 		</section>
 		<section class="list">
 			<ol>
-				<li ng-repeat="bug in bugs track by $index">
-					<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">{{bug.name}} - <small><i>[{{bug.id}}]</i></small></span>
+				<li ng-repeat="bug in ( bugs | filter:{name : searchBug} ) ">
+					<span class="bugname" ng-click="toggle(bug)" ng-class="{closed : bug.isClosed}">
+						{{bug.name}} - <small><i>[{{bug.id}}]</i></small>
+					</span>
 					<div class="datetime">[Created At]</div>
 				</li>
 				
