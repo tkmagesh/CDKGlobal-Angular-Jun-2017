@@ -70,8 +70,10 @@
 	</script>
 	<script src="angular.js"></script>
 	<script src="moment.js"></script>
+	<script src="utils.js"></script>
 	<script>
-		var bugTrackerApp = angular.module('bugTrackerApp', []);
+
+		var bugTrackerApp = angular.module('bugTrackerApp', ['utils']);
 
 		bugTrackerApp.value('defaultBugName', '[Default Bug Name]')
 
@@ -202,23 +204,7 @@
 			}
 		});
 
-		bugTrackerApp.value('defaultTrimLength', 30);
-
-		bugTrackerApp.filter('trimText', function(defaultTrimLength){
-			function getTrimmedText(data, len){
-				return data.length < len ? data : data.substr(0,len) + '...';
-			}
-			return function(data, trimLength){
-				trimLength = trimLength || defaultTrimLength;
-				return getTrimmedText(data, trimLength);
-			}
-		});
-
-		bugTrackerApp.filter('elapsed', function(){
-			return function(data){
-				return moment(data).fromNow();
-			};
-		});
+		
 	</script>
 </head>
 <body ng-app="bugTrackerApp">
